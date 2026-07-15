@@ -1,0 +1,36 @@
+<resources>
+    <string name="app_name">CypherDocs</string>
+    <string name="tagline">One reader. Every file. No PDF clutter, no editor bloat.</string>
+
+    <string name="btn_open_file">Open a file</string>
+    <string name="empty_state_title">No file open</string>
+    <string name="empty_state_subtitle">Tap \"Open a file\" to browse and read text, image, and office documents — right from CypherDocs.</string>
+    <string name="recent_files_title">Recent</string>
+
+    <string name="title_text_viewer">Text Viewer</string>
+    <string name="title_image_viewer">Image Viewer</string>
+    <string name="title_doc_viewer">Document Viewer</string>
+
+    <string name="action_search">Search</string>
+    <string name="action_share">Share</string>
+    <string name="action_browse">Browse files</string>
+    <string name="action_zoom_in">Zoom in</string>
+    <string name="action_zoom_out">Zoom out</string>
+    <string name="action_next">Next</string>
+    <string name="action_prev">Previous</string>
+    <string name="action_reset_zoom">Reset zoom</string>
+
+    <string name="search_hint">Find in file…</string>
+    <string name="search_no_matches">No matches</string>
+    <string name="search_match_count">%1$d of %2$d</string>
+
+    <string name="page_indicator">%1$d / %2$d</string>
+    <string name="no_sibling_files">No other files of this type in this folder</string>
+
+    <string name="unsupported_binary_notice">This file type can\'t be shown as text or image. Below is basic file info. Use Share to open it in another app if needed.</string>
+    <string name="office_extract_notice">Showing extracted text from this document (formatting, images and layout are not preserved).</string>
+    <string name="office_extract_failed">Could not extract readable text from this file.</string>
+
+    <string name="permission_denied_toast">Permission denied — can\'t access that file</string>
+    <string name="file_open_error">Couldn\'t open this file</string>
+</resources>

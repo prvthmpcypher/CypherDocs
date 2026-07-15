@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1E1F26"/>
+      <stop offset="100%" stop-color="#141419"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F2A93B"/>
+      <stop offset="100%" stop-color="#D98F1F"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="512" height="512" rx="108" fill="url(#bg)"/>
+
+  <!-- stack of three document pages, back to front -->
+  <g>
+    <rect x="168" y="118" width="150" height="196" rx="14" fill="#2A2C36"/>
+    <rect x="150" y="140" width="150" height="196" rx="14" fill="#3A3D4A"/>
+
+    <!-- front page with folded corner -->
+    <path d="M132 168 h114 l36 36 v156 a14 14 0 0 1 -14 14 h-136 a14 14 0 0 1 -14 -14 v-178 a14 14 0 0 1 14 -14 z"
+          fill="#F7F4EC"/>
+    <path d="M246 168 v28 a8 8 0 0 0 8 8 h28 z" fill="#D8D2C0"/>
+
+    <!-- text lines representing "any file type" content -->
+    <rect x="150" y="238" width="90" height="10" rx="5" fill="#B9B3A0"/>
+    <rect x="150" y="262" width="112" height="10" rx="5" fill="#B9B3A0"/>
+    <rect x="150" y="286" width="72" height="10" rx="5" fill="#B9B3A0"/>
+  </g>
+
+  <!-- amber magnifier glass = search + reading focus -->
+  <circle cx="352" cy="352" r="52" fill="none" stroke="url(#accent)" stroke-width="18"/>
+  <line x1="390" y1="390" x2="430" y2="430" stroke="url(#accent)" stroke-width="20" stroke-linecap="round"/>
+</svg>
