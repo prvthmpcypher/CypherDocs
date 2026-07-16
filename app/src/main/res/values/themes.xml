@@ -1,0 +1,25 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <style name="Theme.CypherDocs" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/cypher_ink</item>
+        <item name="colorPrimaryDark">@color/cypher_ink</item>
+        <item name="colorAccent">@color/cypher_amber</item>
+        <item name="colorSecondary">@color/cypher_amber</item>
+        <item name="android:statusBarColor">@color/cypher_ink</item>
+        <item name="android:windowBackground">@color/cypher_paper</item>
+        <item name="android:navigationBarColor" tools:targetApi="21">@color/cypher_ink</item>
+    </style>
+
+    <style name="Theme.CypherDocs.Toolbar" parent="Widget.MaterialComponents.Toolbar">
+        <item name="android:background">@color/cypher_ink</item>
+        <item name="titleTextColor">@color/cypher_paper</item>
+        <item name="android:theme">@style/ThemeOverlay.MaterialComponents.Dark.ActionBar</item>
+    </style>
+
+    <!-- Used only by OpenWithEntryActivity: invisible pass-through, never actually shown to the user -->
+    <style name="Theme.CypherDocs.Transparent" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowAnimationStyle">@null</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+</resources>

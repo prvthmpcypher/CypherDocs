@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!--
+        IMPORTANT (by design):
+        CypherDocs has NO activity with a LAUNCHER intent-filter, so it never gets an
+        icon in the app drawer / home screen and can't be launched like a normal app.
+
+        The ONLY exported entry point is OpenWithEntryActivity, which declares ACTION_VIEW
+        intent-filters. That means the ONLY way to open CypherDocs is via another app's
+        "Open with…" / share chooser (e.g. a file manager, email attachment, browser download).
+        Once inside, MainActivity (folder browsing + recents) is reachable from the viewer's
+        own menu, but it is not independently launchable from outside the app.
+    -->
+
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+
+    <application
+        android:name=".CypherDocsApp"
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:label="@string/app_name"
+        android:theme="@style/Theme.CypherDocs"
+        android:supportsRtl="true"
+        android:usesCleartextTraffic="false">
+
+        <!--
+            Sole exported / externally-reachable activity. Transparent + no-history:
+            it immediately classifies the incoming file and forwards to the right
+            viewer, so the user never sees this activity itself.
+
+            android:mimeType="*/*" is intentionally broad (so CypherDocs shows up for
+            "any file type" in the Open-with chooser), but ViewerRouter still refuses
+            to actually open PDFs, it shows a message pointing to CypherPDF instead.
+        -->
+        <activity
+            android:name=".OpenWithEntryActivity"
+            android:exported="true"
+            android:noHistory="true"
+            android:excludeFromRecents="true"
+            android:theme="@style/Theme.CypherDocs.Transparent">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="*/*" />
+            </intent-filter>
+        </activity>
+
+        <!-- Internal only: no intent-filter at all, so it cannot be launched from outside
+             CypherDocs itself (no drawer icon, not exported for external ACTION_VIEW/MAIN). -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="false"
+            android:theme="@style/Theme.CypherDocs" />
+
+        <activity
+            android:name=".ui.FolderBrowserActivity"
+            android:exported="false"
+            android:label="@string/app_name" />
+
+        <activity
+            android:name=".viewer.TextViewerActivity"
+            android:exported="false"
+            android:label="@string/title_text_viewer" />
+
+        <activity
+            android:name=".viewer.ImageViewerActivity"
+            android:exported="false"
+            android:label="@string/title_image_viewer" />
+
+        <activity
+            android:name=".viewer.DocViewerActivity"
+            android:exported="false"
+            android:label="@string/title_doc_viewer" />
+
+        <!-- FileProvider used ONLY to share a copy of the currently open file out via Share sheet -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
+    </application>
+</manifest>

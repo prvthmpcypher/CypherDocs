@@ -1,0 +1,14 @@
+<resources>
+    <!-- CypherDocs brand: deep ink + amber accent (paper & pen motif) -->
+    <color name="cypher_ink">#141419</color>
+    <color name="cypher_ink_light">#1E1F26</color>
+    <color name="cypher_amber">#F2A93B</color>
+    <color name="cypher_amber_dark">#D98F1F</color>
+    <color name="cypher_paper">#F7F4EC</color>
+    <color name="cypher_paper_dim">#EAE5D8</color>
+    <color name="cypher_text_primary">#1B1B1F</color>
+    <color name="cypher_text_secondary">#6B6A63</color>
+    <color name="cypher_error">#D64545</color>
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+</resources>
