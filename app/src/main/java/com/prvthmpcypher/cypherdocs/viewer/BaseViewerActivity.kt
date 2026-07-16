@@ -24,7 +24,7 @@ abstract class BaseViewerActivity : AppCompatActivity() {
             ?: throw IllegalStateException("Missing file uri")
         fileName = intent.getStringExtra(ViewerRouter.EXTRA_NAME) ?: "Untitled"
         mimeType = intent.getStringExtra(ViewerRouter.EXTRA_MIME)
-        siblings = intent.getParcelableArrayListExtra(ViewerRouter.EXTRA_SIBLINGS) ?: arrayListOf()
+        siblings = getUriArrayListExtraCompat(ViewerRouter.EXTRA_SIBLINGS)
         siblingNames = intent.getStringArrayListExtra(ViewerRouter.EXTRA_SIBLING_NAMES) ?: arrayListOf()
         currentIndex = intent.getIntExtra(ViewerRouter.EXTRA_INDEX, 0)
     }
@@ -35,6 +35,15 @@ abstract class BaseViewerActivity : AppCompatActivity() {
             intent.getParcelableExtra(key, Uri::class.java)
         } else {
             intent.getParcelableExtra(key)
+        }
+    }
+
+    @Suppress("DEPRECATION")
+    private fun getUriArrayListExtraCompat(key: String): ArrayList<Uri> {
+        return if (Build.VERSION.SDK_INT >= 33) {
+            intent.getParcelableArrayListExtra(key, Uri::class.java) ?: arrayListOf()
+        } else {
+            intent.getParcelableArrayListExtra(key) ?: arrayListOf()
         }
     }
 

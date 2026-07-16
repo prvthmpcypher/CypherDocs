@@ -24,6 +24,15 @@
         android:padding="32dp"
         android:visibility="gone"/>
 
+    <ProgressBar
+        android:id="@+id/progress_bar_folder"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="32dp"
+        android:visibility="gone"/>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_folder_files"
         android:layout_width="match_parent"

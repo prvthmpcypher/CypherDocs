@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.documentfile.provider.DocumentFile
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.prvthmpcypher.cypherdocs.ui.FolderBrowserActivity
@@ -18,6 +19,9 @@ import com.prvthmpcypher.cypherdocs.ui.RecentFilesAdapter
 import com.prvthmpcypher.cypherdocs.util.RecentFile
 import com.prvthmpcypher.cypherdocs.util.RecentFilesStore
 import com.prvthmpcypher.cypherdocs.viewer.ViewerRouter
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class MainActivity : AppCompatActivity() {
 
@@ -72,37 +76,43 @@ class MainActivity : AppCompatActivity() {
     private fun openRecent(recent: RecentFile) {
         val uri = Uri.parse(recent.uri)
 
-        // Rebuild the sibling list from the parent folder, if we still remember it,
-        // so page navigation (next/prev) keeps working from the Recents entry point too.
-        var siblingUris = arrayListOf<Uri>()
-        var siblingNames = arrayListOf<String>()
-        var index = 0
+        // Rebuild the sibling list from the parent folder, if we still remember it, so page
+        // navigation (next/prev) keeps working from the Recents entry point too.
+        // DocumentFile.listFiles() is a content-provider/binder call — doing it on the main
+        // thread can ANR if the folder has a lot of files, so it runs on IO like FolderBrowserActivity.
+        lifecycleScope.launch {
+            var siblingUris = arrayListOf<Uri>()
+            var siblingNames = arrayListOf<String>()
+            var index = 0
 
-        recent.parentTreeUri?.let { treeUriString ->
-            try {
-                val treeUri = Uri.parse(treeUriString)
-                val dir = DocumentFile.fromTreeUri(this, treeUri)
-                val files = dir?.listFiles()?.filter { it.isFile }.orEmpty()
-                siblingUris = ArrayList(files.map { it.uri })
-                siblingNames = ArrayList(files.map { it.name ?: "file" })
-                index = files.indexOfFirst { it.uri == uri }.coerceAtLeast(0)
-            } catch (_: Exception) {
-                // Permission may have lapsed; fall back to opening the single file with no navigation.
+            recent.parentTreeUri?.let { treeUriString ->
+                try {
+                    withContext(Dispatchers.IO) {
+                        val treeUri = Uri.parse(treeUriString)
+                        val dir = DocumentFile.fromTreeUri(this@MainActivity, treeUri)
+                        val files = dir?.listFiles()?.filter { it.isFile }.orEmpty()
+                        siblingUris = ArrayList(files.map { it.uri })
+                        siblingNames = ArrayList(files.map { it.name ?: "file" })
+                        index = files.indexOfFirst { it.uri == uri }.coerceAtLeast(0)
+                    }
+                } catch (_: Exception) {
+                    // Permission may have lapsed; fall back to opening the single file with no navigation.
+                }
             }
-        }
 
-        try {
-            ViewerRouter.open(
-                context = this,
-                uri = uri,
-                name = recent.name,
-                mimeType = recent.mimeType,
-                siblings = siblingUris,
-                siblingNames = siblingNames,
-                index = index
-            )
-        } catch (e: Exception) {
-            Toast.makeText(this, getString(R.string.file_open_error), Toast.LENGTH_SHORT).show()
+            try {
+                ViewerRouter.open(
+                    context = this@MainActivity,
+                    uri = uri,
+                    name = recent.name,
+                    mimeType = recent.mimeType,
+                    siblings = siblingUris,
+                    siblingNames = siblingNames,
+                    index = index
+                )
+            } catch (e: Exception) {
+                Toast.makeText(this@MainActivity, getString(R.string.file_open_error), Toast.LENGTH_SHORT).show()
+            }
         }
     }
 }

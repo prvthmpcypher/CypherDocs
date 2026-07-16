@@ -3,16 +3,21 @@ package com.prvthmpcypher.cypherdocs.ui
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.documentfile.provider.DocumentFile
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.prvthmpcypher.cypherdocs.R
 import com.prvthmpcypher.cypherdocs.util.RecentFilesStore
 import com.prvthmpcypher.cypherdocs.util.RecentFile
 import com.prvthmpcypher.cypherdocs.viewer.ViewerRouter
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class FolderBrowserActivity : AppCompatActivity() {
 
@@ -40,11 +45,9 @@ class FolderBrowserActivity : AppCompatActivity() {
         recycler.layoutManager = LinearLayoutManager(this)
 
         val emptyText = findViewById<TextView>(R.id.text_empty_folder)
+        val progressBar = findViewById<ProgressBar>(R.id.progress_bar_folder)
 
-        entries = loadEntries(treeUri)
-        emptyText.visibility = if (entries.isEmpty()) android.view.View.VISIBLE else android.view.View.GONE
-
-        recycler.adapter = FolderEntriesAdapter(entries) { entry, _ ->
+        val adapterClickListener: (FolderEntry, Int) -> Unit = { entry, _ ->
             if (entry.isDirectory) {
                 val nested = android.content.Intent(this, FolderBrowserActivity::class.java).apply {
                     putExtra(EXTRA_TREE_URI, entry.uri)
@@ -54,6 +57,18 @@ class FolderBrowserActivity : AppCompatActivity() {
             } else {
                 openFile(entry)
             }
+        }
+
+        // DocumentFile.listFiles() is a content-provider/binder call, not free — on folders with
+        // hundreds of files (Downloads, DCIM, etc.) running it on the main thread can block long
+        // enough to trigger an ANR. Load it on IO and only touch views back on Main.
+        progressBar.visibility = android.view.View.VISIBLE
+        lifecycleScope.launch {
+            val loaded = withContext(Dispatchers.IO) { loadEntries(treeUri) }
+            entries = loaded
+            progressBar.visibility = android.view.View.GONE
+            emptyText.visibility = if (entries.isEmpty()) android.view.View.VISIBLE else android.view.View.GONE
+            recycler.adapter = FolderEntriesAdapter(entries, adapterClickListener)
         }
     }
 

@@ -16,7 +16,11 @@ object ShareUtils {
     fun shareFile(context: Context, sourceUri: Uri, displayName: String, mimeType: String?) {
         try {
             val sharedDir = File(context.cacheDir, "shared").apply { mkdirs() }
-            val outFile = File(sharedDir, displayName)
+            // displayName comes from another app's content provider — never trust it as a raw path.
+            // File(...).name strips any directory components (including "../"), so the output
+            // can never land outside sharedDir.
+            val safeName = File(displayName).name.ifBlank { "shared_file" }
+            val outFile = File(sharedDir, safeName)
 
             context.contentResolver.openInputStream(sourceUri)?.use { input ->
                 outFile.outputStream().use { output ->
